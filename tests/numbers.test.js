@@ -33,3 +33,15 @@ test('fifty-splitter', function(t) {
     t.end()
   })
 })
+
+//test maximum callstack problems
+test('500k-splitter', function(t) {
+  let options = {
+    file: __dirname + '/docs/500-k.txt',
+    splitter: "\n"
+  }
+  getChunkCount(options, (count) => {
+    t.equal(count, 500000, 'got-500k-chunks')
+    t.end()
+  })
+})

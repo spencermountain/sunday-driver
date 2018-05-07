@@ -9,7 +9,7 @@ it was built to support dispatching multiple workers on the same file, by cpu-co
 (heavily) inspired by [line-by-line](https://github.com/Osterjour/line-by-line), by [Markus Ostertag](https://github.com/Osterjour)🙏
 
 WIP
-<!-- `npm i sunday-driver` -->
+`npm i sunday-driver`
 
 ```js
 const SundayDriver = require('sunday-driver')

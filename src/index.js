@@ -1,10 +1,14 @@
 const fs = require('fs')
+const async = require('async');
 const events = require('events');
+const getStartEnd = require('./_start-end');
 
 const SundayDriver = function(options) {
+  //convert percentages, etc.
+  options = getStartEnd(options)
   this.file = options.file
-  this.starting = options.start || 0
-  this.ending = options.end
+  this.startByte = options.startByte || 0
+  this.endByte = options.endByte
   this.encoding = options.encoding || 'utf-8'
   this.splitter = options.splitter || '\n'
   this.current = ''
@@ -36,20 +40,16 @@ SundayDriver.prototype.doChunk = function(chunk, callback) {
 SundayDriver.prototype.doChunks = function(arr, callback) {
   let _this = this
   this.stream.pause();
-  const doChunk = function(i) {
-    // console.log('chunk ' + i)
-    let chunk = arr[i] + this.splitter
-    _this.doChunk(chunk, () => {
-      i += 1
-      if (i < arr.length) {
-        doChunk(i)
-      } else {
-        _this.stream.resume()
-        callback()
-      }
-    })
-  }
-  doChunk(0)
+  let fns = arr.map((chunk) => {
+    return function(cb) {
+      chunk = chunk + this.splitter
+      _this.doChunk(chunk, cb)
+    }
+  })
+  async.series(fns, () => {
+    _this.stream.resume()
+    callback()
+  })
 }
 
 SundayDriver.prototype.status = function() {
@@ -66,6 +66,7 @@ SundayDriver.prototype.onData = function(data) {
   }
   //ok, we parse a chunk here
   let parts = this.current.split(this.splitter)
+
   //do all chunks, except for last one
   let last = parts.pop()
   this.doChunks(parts, () => {
@@ -77,7 +78,10 @@ SundayDriver.prototype.onData = function(data) {
 // get the read-stream started...
 SundayDriver.prototype.init = function() {
   this.stream = fs.createReadStream(this.file, {
-    encoding: this.encoding || 'utf8'
+    encoding: this.encoding || 'utf-8',
+    start: this.startByte,
+    end: this.endByte,
+    highWaterMark: this.chunkSize || 2 * 1024 //this sets the size for each data chunk
   });
   //wire-up our listeners, too
   this.stream.on('error', (err) => {
