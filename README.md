@@ -11,16 +11,17 @@
 <p></p>
 
 <div align="center">
+	<h2>🕶️</h2>
   <div><sup>cruise right through it</sup></div>
 </div>
 
 **sunday-driver** never gets ahead of itself. It works through a large file at a *responsible* rate.
 
-At given points, it pauses to let you consider the data, and waits to resume working, once that's done.
+It pauses to let you consider the data, at given points, and waits to resume working once that's done.
 
-this makes it easier to process a large file, by sizable chunks, without any race-conditions or memory leaking.
+this allows processing a large file, by sizable chunks, without any race-conditions or memory leaking.
 
-it was built to support dispatching multiple workers on the same file, and letting them run independently and responsibly.
+it was built to support using multiple workers on the same file, and letting them run independently and responsibly.
 
 (heavily) inspired by [line-by-line](https://github.com/Osterjour/line-by-line), by [Markus Ostertag](https://github.com/Osterjour)🙏
 
