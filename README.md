@@ -6,26 +6,28 @@
   <a href="https://www.codacy.com/app/spencerkelly86/sunday-driver">
     <img src="https://api.codacy.com/project/badge/grade/1b0f3874f43f4b8c87ac855bb69bca8f" />
   </a>
-	<div>process a large file, without thinking</div>
+	<div>process a large file, without the jitters</div>
 </div>
 <p></p>
 
 <div align="center">
 	<h2>🕶️</h2>
-  <div><sup>cruise right through it</sup></div>
+  <div><sup> - keep a steady cruise -</sup></div>
 </div>
 
-**sunday-driver** never gets ahead of itself. It works through a large file at a *responsible* rate.
+**sunday-driver** never gets ahead of itself - it works through a large file *at a responsible pace*.
 
 It pauses to let you consider the data, at given points, and waits to resume working once that's done.
 
 this allows processing a large file, by sizable chunks, without any race-conditions or memory leaking.
 
-it was built to support using multiple workers on the same file, and letting them run independently and responsibly.
-
 (heavily) inspired by [line-by-line](https://github.com/Osterjour/line-by-line), by [Markus Ostertag](https://github.com/Osterjour)🙏
 
-`npm i sunday-driver`
+it was built to support using multiple workers on the same file, and letting them run independently and responsibly.
+
+<div align="center">
+  <code>npm i sunday-driver</code>
+</div>
 
 ```js
 const SundayDriver = require('sunday-driver')
