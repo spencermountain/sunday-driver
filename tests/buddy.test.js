@@ -1,23 +1,24 @@
 let test = require('tape')
-const SundayDriver = require('../src/index')
+const getChunkCount = require('./fns').getChunkCount
 
-test('gets-smallfile-chunks', function(t) {
-  let arr = []
+test('gets-newline-chunks', function(t) {
   let options = {
     file: __dirname + '/docs/buddyHolly.txt',
     splitter: "\n\n" //"Woo-hoo",
   }
-  let runner = new SundayDriver(options)
-  runner.on('each', (str, cb) => {
-    arr.push(str)
-    cb()
+  getChunkCount(options, (count) => {
+    t.equal(count, 5, 'got-all-chunks')
+    t.end()
   })
-  runner.on('error', (err) => {
-    console.log(err)
-    t.fail(err)
-  })
-  runner.on('end', () => {
-    t.equal(arr.length, 5, 'got-all-chunks')
+})
+
+test('never-match-splitter', function(t) {
+  let options = {
+    file: __dirname + '/docs/buddyHolly.txt',
+    splitter: "foobar"
+  }
+  getChunkCount(options, (count) => {
+    t.equal(count, 1, 'got-one-huge-chunks')
     t.end()
   })
 })

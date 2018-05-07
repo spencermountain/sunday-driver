@@ -1,44 +1,35 @@
 let test = require('tape')
-const SundayDriver = require('../src/index')
+const getChunkCount = require('./fns').getChunkCount
 
 test('middle-splitter', function(t) {
-  let arr = []
   let options = {
-    file: __dirname + '/docs/numbers.txt',
+    file: __dirname + '/docs/500-k.txt',
     splitter: "250000\n"
   }
-  let runner = new SundayDriver(options)
-  runner.on('each', (str, cb) => {
-    arr.push(str)
-    cb()
-  })
-  runner.on('error', (err) => {
-    console.log(err)
-    t.fail(err)
-  })
-  runner.on('end', () => {
-    t.equal(arr.length, 2, 'got-two-chunks')
+  getChunkCount(options, (count) => {
+    t.equal(count, 2, 'got-two-chunks')
     t.end()
   })
 })
 
 test('fifths-splitter', function(t) {
-  let arr = []
   let options = {
-    file: __dirname + '/docs/numbers.txt',
-    splitter: "100000\n"
+    file: __dirname + '/docs/500-k.txt',
+    splitter: "00000\n"
   }
-  let runner = new SundayDriver(options)
-  runner.on('each', (str, cb) => {
-    arr.push(str)
-    cb()
+  getChunkCount(options, (count) => {
+    t.equal(count, 5, 'got-five-chunks')
+    t.end()
   })
-  runner.on('error', (err) => {
-    console.log(err)
-    t.fail(err)
-  })
-  runner.on('end', () => {
-    t.equal(arr.length, 5, 'got-five-chunks')
+})
+
+test('fifty-splitter', function(t) {
+  let options = {
+    file: __dirname + '/docs/500-k.txt',
+    splitter: "0000\n"
+  }
+  getChunkCount(options, (count) => {
+    t.equal(count, 50, 'got-fifty-chunks')
     t.end()
   })
 })

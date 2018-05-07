@@ -1,11 +1,11 @@
 const SundayDriver = require('./src/index')
 
 let options = {
-  file: './tests/docs/numbers.txt',
+  file: './tests/docs/500-k.txt',
   // file: './tests/docs/buddyHolly.txt',
   // start: 80, //as-percentage
   // end: 100, //as-percentage
-  splitter: "100000\n" //"Woo-hoo",
+  splitter: "0000\n"
 }
 let runner = new SundayDriver(options)
 
