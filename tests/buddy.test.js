@@ -4,7 +4,7 @@ const SundayDriver = require('../src/index')
 test('gets-smallfile-chunks', function(t) {
   let arr = []
   let options = {
-    file: __dirname + '/buddyHolly.txt',
+    file: __dirname + '/docs/buddyHolly.txt',
     splitter: "\n\n" //"Woo-hoo",
   }
   let runner = new SundayDriver(options)

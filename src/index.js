@@ -8,13 +8,14 @@ const SundayDriver = function(options) {
   this.encoding = options.encoding || 'utf-8'
   this.splitter = options.splitter || '\n'
   this.current = ''
+  this.chunk_count = 0
   events.EventEmitter.call(this);
   setImmediate(() => {
     this.init();
   });
 }
 
-//hook-up this event-emitter fooey
+//hook-up this event-emitter fooey..
 SundayDriver.prototype = Object.create(events.EventEmitter.prototype, {
   constructor: {
     value: SundayDriver,
@@ -22,29 +23,53 @@ SundayDriver.prototype = Object.create(events.EventEmitter.prototype, {
   }
 });
 
-// SundayDriver.prototype.doChunk = function(chunk) {}
+//send this data to our user..
+SundayDriver.prototype.doChunk = function(chunk, callback) {
+  this.emit('each', chunk, () => {
+    this.current = ''
+    this.chunk_count += 1
+    callback()
+  })
+}
+
+//handle multiple chunks, if we got them
+SundayDriver.prototype.doChunks = function(arr, callback) {
+  let _this = this
+  this.stream.pause();
+  const doChunk = function(i) {
+    // console.log('chunk ' + i)
+    let chunk = arr[i] + this.splitter
+    _this.doChunk(chunk, () => {
+      i += 1
+      if (i < arr.length) {
+        doChunk(i)
+      } else {
+        _this.stream.resume()
+        callback()
+      }
+    })
+  }
+  doChunk(0)
+}
+
+SundayDriver.prototype.status = function() {
+  return {
+    chunks: this.chunk_count
+  }
+}
 
 //on whatever-sized data node gives us
 SundayDriver.prototype.onData = function(data) {
-  let _this = this
   this.current += data
   if (data.indexOf(this.splitter) === -1) {
     return //keep on going!
   }
   //ok, we parse a chunk here
-  this.stream.pause();
   let parts = this.current.split(this.splitter)
-  let completed = 0
-  //do *all* chunks
-  parts.forEach((chunk) => {
-    chunk = chunk + this.splitter
-    this.emit('each', chunk, () => {
-      completed += 1
-      if (completed === parts.length) {
-        _this.current = '' //parts[1]
-        _this.stream.resume()
-      }
-    })
+  //do all chunks, except for last one
+  let last = parts.pop()
+  this.doChunks(parts, () => {
+    this.current = last
   })
 }
 
@@ -61,13 +86,17 @@ SundayDriver.prototype.init = function() {
   this.stream.on('data', (data) => {
     this.onData(data)
   });
+
   this.stream.on('end', () => {
+    //do we need to do the last one?
     if (this.current) {
-      this.emit('each', this.current, () => {
+      this.doChunk(this.current, () => {
         this.emit('end')
       })
+    } else {
+      //end it.
+      this.emit('end')
     }
-    this.emit('end')
   });
 }
 
