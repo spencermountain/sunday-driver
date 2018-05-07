@@ -8,25 +8,24 @@ const getByte = function(str, total) {
 //find the specific byte to begin the file on
 const startEnd = function(options) {
   const stats = fs.statSync(options.file)
-  const fileSize = stats.size
-  if (fileSize === 0) {
+  options.filesize = stats.size
+  if (options.filesize === 0) {
     return options
   }
   if (options.start) {
     if (typeof options.start === 'string') {
-      options.startByte = getByte(options.start, fileSize)
+      options.startByte = getByte(options.start, options.filesize)
     } else {
       options.startByte = options.start
     }
   }
   if (options.end) {
     if (typeof options.end === 'string') {
-      options.endByte = getByte(options.end, fileSize)
+      options.endByte = getByte(options.end, options.filesize)
     } else {
       options.endByte = options.end
     }
   }
-  console.log(options)
   return options
 }
 module.exports = startEnd

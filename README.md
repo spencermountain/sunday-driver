@@ -11,20 +11,19 @@
 <p></p>
 
 <div align="center">
-  <div><sup>never get ahead of yourself.</sup></div>
+  <div><sup>cruise right through it</sup></div>
 </div>
 
-**sunday-driver** works through a large file at a *responsible* rate.
+**sunday-driver** never gets ahead of itself. It works through a large file at a *responsible* rate.
 
 At given points, it pauses to let you consider the data, and waits to resume working, once that's done.
 
 this makes it easier to process a large file, by sizable chunks, without any race-conditions or memory leaking.
 
-it was built to support dispatching multiple workers on the same file, by cpu-core, and letting them run independently and responsibly.
+it was built to support dispatching multiple workers on the same file, and letting them run independently and responsibly.
 
 (heavily) inspired by [line-by-line](https://github.com/Osterjour/line-by-line), by [Markus Ostertag](https://github.com/Osterjour)🙏
 
-WIP
 `npm i sunday-driver`
 
 ```js
@@ -33,23 +32,32 @@ const SundayDriver = require('sunday-driver')
 let options= {
   file: './my/large/file.tsv',
   splitter: '\n',
-  //as percentages:
-  start: '80%',
+  start: '80%', //as percentages, or in bytes
   end: '100%',
 }
 
 let runner = new SundayDriver(options)
-runner.on('each', (data, resume) => {
-  console.log(data)
+
+//gets a the same thing as you would from a .split()
+runner.on('each', (chunk, resume) => {
+  console.log(chunk)//do your thing..
   resume()
 })
 runner.on('end', () => {
   console.log('done!')
 })
 runner.on('error', console.error)
-
-runner.status() // '85%'
 ```
 
+at any time, when you want a report, you can call `.status()`:
+```js
+runner.status()
+/*{
+  chunks: 10,      //how many times we've called .on('each',fn)
+	bytes: 20480,    //how many bytes we've processed so far
+	position: 34.42, //where, in percentage, we are in the file. (if we didn't start at the top!)
+	progress: 68.84  //how far, in percentage, we are to being complete
+}*/
+```
 
 MIT

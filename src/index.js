@@ -7,12 +7,15 @@ const SundayDriver = function(options) {
   //convert percentages, etc.
   options = getStartEnd(options)
   this.file = options.file
+  this.filesize = options.filesize
   this.startByte = options.startByte || 0
   this.endByte = options.endByte
   this.encoding = options.encoding || 'utf-8'
   this.splitter = options.splitter || '\n'
-  this.current = ''
+  this.chunkSize = options.chunkSize || 2 * 1024
   this.chunk_count = 0
+
+  this.current = ''
   events.EventEmitter.call(this);
   setImmediate(() => {
     this.init();
@@ -52,10 +55,24 @@ SundayDriver.prototype.doChunks = function(arr, callback) {
   })
 }
 
+const round = function(num) {
+  return Math.round(num * 100) / 100
+}
+
 SundayDriver.prototype.status = function() {
-  return {
-    chunks: this.chunk_count
+  let result = {
+    chunks: this.chunk_count,
+    bytes: this.chunk_count * this.chunkSize,
+    //the absolute location in the file
+    position: 0,
+    progress: 0,
   }
+  if (this.filesize) {
+    result.position = round(result.bytes / this.filesize)
+    let totalBytes = this.endByte - this.startByte
+    result.progress = round(result.bytes / totalBytes)
+  }
+  return result
 }
 
 //on whatever-sized data node gives us
@@ -81,7 +98,7 @@ SundayDriver.prototype.init = function() {
     encoding: this.encoding || 'utf-8',
     start: this.startByte,
     end: this.endByte,
-    highWaterMark: this.chunkSize || 2 * 1024 //this sets the size for each data chunk
+    highWaterMark: this.chunkSize //this sets the size for each data chunk
   });
   //wire-up our listeners, too
   this.stream.on('error', (err) => {

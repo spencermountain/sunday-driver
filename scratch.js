@@ -10,7 +10,7 @@ let options = {
 let runner = new SundayDriver(options)
 
 runner.on('each', (str, cb) => {
-  console.log(str)
+  console.log(runner.status())
   // let lastBit = str.split('\n')
   // lastBit = lastBit[lastBit.length - 2]
   // console.log('\n\n====== chunk ======    ' + lastBit)

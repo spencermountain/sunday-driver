@@ -44,6 +44,7 @@
     "console": true,
     "module": true,
     "exports": true,
+    "setImmediate": true,
     "setInterval": true,
     "setTimeout": true,
     "global": true,
