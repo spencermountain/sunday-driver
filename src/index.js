@@ -34,10 +34,17 @@ SundayDriver.prototype.onData = function(data) {
   //ok, we parse a chunk here
   this.stream.pause();
   let parts = this.current.split(this.splitter)
-  let chunk = parts[0] + this.splitter
-  this.emit('each', chunk, () => {
-    _this.current = parts[1]
-    _this.stream.resume()
+  let completed = 0
+  //do *all* chunks
+  parts.forEach((chunk) => {
+    chunk = chunk + this.splitter
+    this.emit('each', chunk, () => {
+      completed += 1
+      if (completed === parts.length) {
+        _this.current = '' //parts[1]
+        _this.stream.resume()
+      }
+    })
   })
 }
 
@@ -55,9 +62,12 @@ SundayDriver.prototype.init = function() {
     this.onData(data)
   });
   this.stream.on('end', () => {
-    this.emit('chunk', this.current, () => {
-      this.emit('end')
-    })
+    if (this.current) {
+      this.emit('each', this.current, () => {
+        this.emit('end')
+      })
+    }
+    this.emit('end')
   });
 }
 

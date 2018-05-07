@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "scripts": {
     "watch": "node ./scratch.js",
-    "test": "\"node_modules/.bin/tape\" \"./tests/*.test.js\" | \"node_modules/.bin/tap-spec\" --color"
+    "test": "\"node_modules/.bin/tape\" \"./tests/*.test.js\" | \"node_modules/.bin/tap-dancer\" --color"
   },
   "repository": {
     "type": "git",

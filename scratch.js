@@ -1,16 +1,16 @@
 const SundayDriver = require('./src/index')
 
 let options = {
-  // file: './tests/testFile.txt',
-  file: './tests/smallFile.txt',
+  file: './tests/testFile.txt',
+  // file: './tests/buddyHolly.txt',
   // start: 80, //as-percentage
   // end: 100, //as-percentage
-  splitter: "Woo-hoo",
+  splitter: "50\n" //"Woo-hoo",
 }
 let runner = new SundayDriver(options)
 
 runner.on('each', (str, cb) => {
-  console.log('\n----chunk----')
+  console.log('\n\n====== chunk ======')
   console.log(str)
   cb()
 })
