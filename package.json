@@ -1,0 +1,23 @@
+{
+  "name": "not-easy",
+  "version": "0.0.1",
+  "description": "read a large file at high-speed",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spencermountain/not-easy.git"
+  },
+  "author": "spencermountain@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spencermountain/not-easy/issues"
+  },
+  "homepage": "https://github.com/spencermountain/not-easy#readme",
+  "dependencies": {
+    "tap-dancer": "0.0.2",
+    "tape": "^4.9.0"
+  }
+}
