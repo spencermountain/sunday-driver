@@ -1,13 +1,32 @@
 const fs = require('fs')
-const events = require("events");
+// const events = require("events");
 
-const NotEasy = function(options) {
+const SundayDriver = function(options) {
   this.file = options.file
-  this.start = options.start || 0
-  this.end = options.end
+  this.starting = options.start || 0
+  this.ending = options.end
+  this.splitter = '\n'
+  this.current = ''
+
   this.stream = fs.createReadStream(this.file, {
-    encoding: this._encoding
+    encoding: options.encoding || 'utf8'
   });
+  this.stream.on('error', this.onError);
+  this.stream.on('end', this.onEnd);
+
+  this.stream.on('data', (data) => {
+    if (data.indexOf(this.splitter) === -1) {
+      this.current += data
+    } else { //we split here
+      this.stream.pause();
+      let split = data.split(this.splitter)
+      this.current += split[0]
+      this.onEach(this.current)
+      this.current = split.slice(1).join() //?
+      this.stream.resume()
+    }
+
+  })
 }
 
 // NotEasy.prototype = Object.create(events.EventEmitter.prototype, {
@@ -17,4 +36,4 @@ const NotEasy = function(options) {
 //   }
 // });
 
-module.exports = NotEasy
+module.exports = SundayDriver
