@@ -1,39 +1,67 @@
 const fs = require('fs')
-// const events = require("events");
+const events = require('events');
 
 const SundayDriver = function(options) {
   this.file = options.file
   this.starting = options.start || 0
   this.ending = options.end
-  this.splitter = '\n'
+  this.encoding = options.encoding || 'utf-8'
+  this.splitter = options.splitter || '\n'
   this.current = ''
-
-  this.stream = fs.createReadStream(this.file, {
-    encoding: options.encoding || 'utf8'
+  events.EventEmitter.call(this);
+  setImmediate(() => {
+    this.init();
   });
-  this.stream.on('error', this.onError);
-  this.stream.on('end', this.onEnd);
+}
 
-  this.stream.on('data', (data) => {
-    if (data.indexOf(this.splitter) === -1) {
-      this.current += data
-    } else { //we split here
-      this.stream.pause();
-      let split = data.split(this.splitter)
-      this.current += split[0]
-      this.onEach(this.current)
-      this.current = split.slice(1).join() //?
-      this.stream.resume()
-    }
+//hook-up this event-emitter fooey
+SundayDriver.prototype = Object.create(events.EventEmitter.prototype, {
+  constructor: {
+    value: SundayDriver,
+    enumerable: false
+  }
+});
 
+// SundayDriver.prototype.doChunk = function(chunk) {}
+
+//on whatever-sized data node gives us
+SundayDriver.prototype.onData = function(data) {
+  let _this = this
+  this.current += data
+  if (data.indexOf(this.splitter) === -1) {
+    return //keep on going!
+  }
+  //ok, we parse a chunk here
+  this.stream.pause();
+  let parts = this.current.split(this.splitter)
+  let chunk = parts[0] + this.splitter
+  this.emit('each', chunk, () => {
+    _this.current = parts[1]
+    _this.stream.resume()
   })
 }
 
-// NotEasy.prototype = Object.create(events.EventEmitter.prototype, {
-//   constructor: {
-//     value: NotEasy,
-//     enumerable: false
-//   }
-// });
+//okay, this is basically the constructor.
+// get the read-stream started...
+SundayDriver.prototype.init = function() {
+  this.stream = fs.createReadStream(this.file, {
+    encoding: this.encoding || 'utf8'
+  });
+  //wire-up our listeners, too
+  this.stream.on('error', (err) => {
+    this.emit('error', err)
+  });
+  this.stream.on('data', (data) => {
+    this.onData(data)
+  });
+  this.stream.on('end', () => {
+    this.emit('chunk', this.current, () => {
+      this.emit('end')
+    })
+  });
+}
+
+//aliases
+SundayDriver.prototype.onComplete = SundayDriver.prototype.onEnd
 
 module.exports = SundayDriver

@@ -1,18 +1,25 @@
 const SundayDriver = require('./src/index')
 
 let options = {
-  file: './my/large/file.txt',
-  start: 80, //as-percentage
-  end: 100, //as-percentage
-  splitter: '\n',
+  // file: './tests/testFile.txt',
+  file: './tests/smallFile.txt',
+  // start: 80, //as-percentage
+  // end: 100, //as-percentage
+  splitter: "Woo-hoo",
 }
 let runner = new SundayDriver(options)
 
-runner.onEach((chunk) => {
+runner.on('each', (str, cb) => {
+  console.log('\n----chunk----')
+  console.log(str)
+  cb()
 })
-runner.onComplete(() => {
+runner.on('error', (err) => {
+  console.log(err)
 })
-runner.onError((e) => {
+runner.on('end', () => {
+  console.log('end!')
 })
-runner.status((percentage) => {
-})
+
+// runner.status((percentage) => {
+// })
