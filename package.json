@@ -1,6 +1,6 @@
 {
   "name": "sunday-driver",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "read a large file at high-speed",
   "main": "./src/index.js",
   "scripts": {
@@ -17,12 +17,10 @@
     "url": "https://github.com/spencermountain/not-easy/issues"
   },
   "homepage": "https://github.com/spencermountain/not-easy#readme",
-  "dependencies": {
-    "async": "^2.6.0",
-    "tap-dancer": "0.0.2",
-    "tape": "^4.9.0"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "tap-dancer": "0.0.2",
+    "tape": "^4.9.0",
     "amble": "0.0.6"
   }
 }

@@ -4,16 +4,16 @@ const round = function(num) {
 
 const getStatus = function() {
   let result = {
-    chunks: this.chunk_count,
-    bytes: this.chunk_count * this.chunkSize,
-    //the absolute location in the file
-    position: 0,
-    progress: 0,
+    bytesDone: this.bytesDone,
+    chunksDone: this.chunk_count,
+    position: 0, //the absolute location in the file
+    progress: 0, //relative status between start-end
   }
   if (this.filesize) {
-    result.position = round(result.bytes / this.filesize)
+    let place = this.startByte + result.bytesDone
+    result.position = round(place / this.filesize)
     let totalBytes = this.endByte - this.startByte
-    result.progress = round(result.bytes / totalBytes)
+    result.progress = round(result.bytesDone / totalBytes)
   }
   return result
 }

@@ -15,6 +15,8 @@ test('parse xml', function(t) {
   })
   driver.on('end', () => {
     t.equal(count, 2005, 'got all xml pages')
+    // let status = driver.status()
+    // console.log(status)
     t.end()
   })
 })

@@ -56,8 +56,8 @@ at any time, when you want a report, you can call `.status()`:
 ```js
 runner.status()
 /*{
-  chunks: 10,      //how many times we've called .on('each',fn)
-	bytes: 20480,    //how many bytes we've processed so far
+  chunksDone:: 10,      //how many times we've called .on('each',fn)
+	bytesDone:: 20480,    //how many bytes we've processed so far
 	position: 34.42, //where, in percentage, we are in the file. (if we didn't start at the top!)
 	progress: 68.84  //how far, in percentage, we are to being complete
 }*/
