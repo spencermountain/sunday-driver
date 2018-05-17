@@ -6,24 +6,20 @@
   <a href="https://www.codacy.com/app/spencerkelly86/sunday-driver">
     <img src="https://api.codacy.com/project/badge/grade/1b0f3874f43f4b8c87ac855bb69bca8f" />
   </a>
-	<div>process a large file, without the jitters</div>
+	<div>process a large file, at a steady cruise</div>
 </div>
 <p></p>
 
 <div align="center">
 	<h2>🕶️</h2>
-  <div><sup> - keep a steady cruise -</sup></div>
+  <div><sup> - slow is smooth, smooth is fast -</sup></div>
 </div>
 
-**sunday-driver** never gets ahead of itself - it works through a large file *at a responsible pace*.
-
-It pauses to let you consider the data, at given points, and waits to resume working once that's done.
+**sunday-driver** works through a large file *at a responsible* pace - it pauses to let you consider the data, at given points, and waits to resume working once that's all done.
 
 this allows processing a large file, by sizable chunks, without any race-conditions or memory leaking.
 
 (heavily) inspired by [line-by-line](https://github.com/Osterjour/line-by-line), by [Markus Ostertag](https://github.com/Osterjour)🙏
-
-it was built to support using multiple workers on the same file, and letting them run independently and responsibly.
 
 <div align="center">
   <code>npm i sunday-driver</code>
@@ -41,6 +37,7 @@ let options= {
 
 let runner = new SundayDriver(options)
 
+//don't forget this listener
 //gets a the same thing as you would from a .split()
 runner.on('each', (chunk, resume) => {
   console.log(chunk)//do your thing..
@@ -62,5 +59,7 @@ runner.status()
 	progress: 68.84  //how far, in percentage, we are to being complete
 }*/
 ```
+
+it was built to support unleashing multiple workers on the same file, and letting them run safely and responsibly, without blowing any fuses.
 
 MIT
