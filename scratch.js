@@ -1,26 +1,17 @@
 const SundayDriver = require('./src/index')
 
 let options = {
-  // file: './tests/docs/500-k.txt',
-  file: './tests/docs/buddyHolly.txt',
-  start: '50%',
-  end: '100%',
-  splitter: "\n"
+  file: './tests/docs/smallwiki-latest-pages-articles.xml',
+  splitter: "</page>",
+  chunkSize: 20
 }
-let runner = new SundayDriver(options)
 
-runner.on('each', (str, cb) => {
-  console.log(runner.status())
-  // let lastBit = str.split('\n')
-  // lastBit = lastBit[lastBit.length - 2]
-  // console.log('\n\n====== chunk ======    ' + lastBit)
+let driver = new SundayDriver(options)
+driver.on('each', (str, cb) => {
   // console.log(str)
+  console.log('-----------')
   cb()
 })
-runner.on('error', (err) => {
-  console.log(err)
-})
-runner.on('end', () => {
-  console.log(runner.status())
-  console.log('end!')
+driver.on('end', () => {
+  console.log('-done-')
 })

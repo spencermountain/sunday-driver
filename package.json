@@ -4,7 +4,7 @@
   "description": "read a large file at high-speed",
   "main": "./src/index.js",
   "scripts": {
-    "watch": "node ./scratch.js",
+    "watch": "amble ./scratch.js",
     "test": "\"node_modules/.bin/tape\" \"./tests/*.test.js\" | \"node_modules/.bin/tap-dancer\" --color"
   },
   "repository": {
@@ -21,5 +21,8 @@
     "async": "^2.6.0",
     "tap-dancer": "0.0.2",
     "tape": "^4.9.0"
+  },
+  "devDependencies": {
+    "amble": "0.0.6"
   }
 }
