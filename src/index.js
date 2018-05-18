@@ -69,19 +69,33 @@ SundayDriver.prototype.onData = function(data) {
   //do all chunks, except for last one
   let last = parts.pop()
 
-  //emit each chunk over to user
+  //emit each chunk over to user's function
   this.stream.pause();
-  let done = 0
-  for (let i = 0; i < parts.length; i += 1) {
-    parts[i] = parts[i] + this.splitter
-    this.doChunk(parts[i], () => {
-      done += 1
-      if (done >= parts.length) {
+  let i = 0
+  const doit = (chunk) => {
+    chunk += this.splitter
+    this.doChunk(chunk, () => {
+      i += 1
+      if (i <= parts.length - 1) {
+        doit(parts[i]) //recursive
+      } else {
         this.current = last
         this.stream.resume() //go!
       }
     })
   }
+  doit(parts[i])
+// let done = 0
+// for (let i = 0; i < parts.length; i += 1) {
+//   parts[i] = parts[i] + this.splitter
+//   this.doChunk(parts[i], () => {
+//     done += 1
+//     if (done >= parts.length) {
+//       this.current = last
+//       this.stream.resume() //go!
+//     }
+//   })
+// }
 }
 
 SundayDriver.prototype.onEnd = function() {
