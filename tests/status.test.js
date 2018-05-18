@@ -2,12 +2,8 @@ let test = require('tape')
 const SundayDriver = require('../src/index')
 
 const doit = function(options, callback) {
-  let driver = new SundayDriver(options)
-  driver.on('each', (str, cb) => {
-    cb()
-  })
-  driver.on('end', () => {
-    callback(driver)
+  new SundayDriver(options).then((status) => {
+    callback(status)
   })
 }
 
@@ -18,11 +14,10 @@ test('0-100', function(t) {
     end: '100%',
     splitter: "200",
   }
-  doit(options, (driver) => {
-    let status = driver.status()
+  doit(options, (status) => {
     t.equal(status.progress, 1, 'progress')
     t.equal(status.position, 1, 'position')
-    t.equal(status.bytesDone, driver.filesize, 'bytesDone')
+    t.equal(status.bytesDone, status.filesize, 'bytesDone')
     t.end()
   })
 })
@@ -34,11 +29,10 @@ test('0-20', function(t) {
     end: '20%',
     splitter: "200",
   }
-  doit(options, (driver) => {
-    let status = driver.status()
+  doit(options, (status) => {
     t.equal(status.progress, 1, 'progress')
     t.equal(status.position, 0.2, 'position')
-    t.ok(status.bytesDone < driver.filesize / 0.3, 'bytesDone')
+    t.ok(status.bytesDone < status.filesize / 0.3, 'bytesDone')
     t.end()
   })
 })
@@ -50,12 +44,11 @@ test('25-50', function(t) {
     end: '50%',
     splitter: "200",
   }
-  doit(options, (driver) => {
-    let status = driver.status()
+  doit(options, (status) => {
     t.equal(status.progress, 1, 'progress')
     t.equal(status.position, 0.5, 'position')
-    t.ok(status.bytesDone > driver.filesize / 5, '> bytesDone')
-    t.ok(status.bytesDone < driver.filesize / 3, '< bytesDone')
+    t.ok(status.bytesDone > status.filesize / 5, '> bytesDone')
+    t.ok(status.bytesDone < status.filesize / 3, '< bytesDone')
     t.end()
   })
 })

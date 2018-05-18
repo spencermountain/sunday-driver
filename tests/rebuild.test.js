@@ -3,13 +3,12 @@ const fs = require('fs');
 const SundayDriver = require('../src/index')
 
 const hitIt = function(options, callback) {
-  let driver = new SundayDriver(options)
   let text = ''
-  driver.on('each', (str, cb) => {
+  options.each = (str, cb) => {
     text += str
     cb()
-  })
-  driver.on('end', () => {
+  }
+  new SundayDriver(options).then(() => {
     callback(text)
   })
 }

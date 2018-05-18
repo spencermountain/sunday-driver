@@ -4,8 +4,6 @@ const init = require('./02-start');
 const getStatus = require('./03-status');
 
 const SundayDriver = function(options) {
-  //convert percentages, etc.
-  options = prep(options)
   this.file = options.file
   this.filesize = options.filesize
   this.startByte = options.startByte || 0
@@ -13,8 +11,12 @@ const SundayDriver = function(options) {
   this.encoding = options.encoding || 'utf-8'
   this.splitter = options.splitter || '\n'
   this.chunkSize = options.chunkSize || 2 * 1024
+  this.each = options.each || ((str, resume) => resume())
   this.chunk_count = 0
   this.bytesDone = 0
+
+  this.logPoints = options.logPoints
+  this.intervals = options.intervals
 
   this.current = ''
   events.EventEmitter.call(this);
@@ -33,10 +35,9 @@ SundayDriver.prototype = Object.create(events.EventEmitter.prototype, {
 
 //send this data to our user..
 SundayDriver.prototype.doChunk = function(chunk, callback) {
-  this.emit('each', chunk, () => {
+  this.each(chunk, () => {
     this.current = ''
     this.chunk_count += 1
-    this.bytesDone += chunk.length
     callback()
   })
 }
@@ -46,6 +47,14 @@ SundayDriver.prototype.doChunk = function(chunk, callback) {
 
 //on whatever-sized data node gives us
 SundayDriver.prototype.onData = function(data) {
+  this.bytesDone += data.length
+
+  //should we log this point?
+  if (this.logPoints[0] && this.logPoints[0].byte && this.bytesDone >= this.logPoints[0].byte) {
+    this.logPoints[0].fn(this.status())
+    this.logPoints.shift()
+  }
+
   let len = this.splitter.length
   //dont re-search the whole string, test the last bit of it
   let tester = this.current.substr(this.current.length - len, this.current.length)
@@ -75,6 +84,21 @@ SundayDriver.prototype.onData = function(data) {
   }
 }
 
+SundayDriver.prototype.onEnd = function() {
+  //close-up the interval-loggers
+  this.intervals.forEach((interval) => {
+    clearInterval(interval)
+  })
+  //do we need to do the last one?
+  if (this.current) {
+    this.doChunk(this.current, () => {
+      this.emit('end')
+    })
+  } else {
+    //end it.
+    this.emit('end')
+  }
+}
 //okay, this is basically the constructor.
 // get the read-stream started...
 SundayDriver.prototype.init = init
@@ -85,4 +109,16 @@ SundayDriver.prototype.status = getStatus
 //aliases
 SundayDriver.prototype.onComplete = SundayDriver.prototype.onEnd
 
-module.exports = SundayDriver
+const goNow = function(options) {
+  options = prep(options)
+  let driver = new SundayDriver(options)
+  //convert percentages, etc.
+  return new Promise((resolve, reject) => {
+    driver.on('end', () => {
+      resolve(driver.status())
+    })
+    driver.on('error', reject)
+  })
+}
+
+module.exports = goNow

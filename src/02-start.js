@@ -14,17 +14,8 @@ const init = function() {
   this.stream.on('data', (data) => {
     this.onData(data)
   });
-
   this.stream.on('end', () => {
-    //do we need to do the last one?
-    if (this.current) {
-      this.doChunk(this.current, () => {
-        this.emit('end')
-      })
-    } else {
-      //end it.
-      this.emit('end')
-    }
+    this.onEnd()
   });
 }
 module.exports = init

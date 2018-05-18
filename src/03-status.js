@@ -8,6 +8,7 @@ const getStatus = function() {
     chunksDone: this.chunk_count,
     position: 0, //the absolute location in the file
     progress: 0, //relative status between start-end
+    filesize: this.filesize
   }
   if (this.filesize) {
     let place = this.startByte + result.bytesDone

@@ -1,4 +1,4 @@
-const SundayDriver = require('./src/index')
+const sundayDriver = require('./src/index')
 
 let options = {
   file: './tests/docs/500-k.txt',
@@ -6,27 +6,37 @@ let options = {
   // file: './tests/docs/abc.txt',
   start: '50%',
   end: '80%',
-  splitter: "20",
-// chunkSize: 20,
+  splitter: "2000",
+  // chunkSize: 20,
+
+  each: (str, resume) => {
+    console.log('-')
+    resume()
+  },
+
+  atPercent: {
+    50: (status) => {
+      console.log('50%!')
+    },
+    75: () => {
+      console.log('75%!')
+    },
+  },
+  atInterval: {
+    '1min': (status) => {
+      console.log('1 minute')
+    },
+    '2mins': () => {
+      console.log('2 minutes')
+    },
+  }
 }
 
 //23 seconds
 //19 seconds
 //18 seconds
 
-let driver = new SundayDriver(options)
-driver.on('each', (str, cb) => {
-  // console.log(str)
-  console.log(driver.status())
-  console.log('--')
-  // console.log(str)
-  cb()
-})
-driver.on('error', (e) => {
-  console.log(e)
-})
-driver.on('end', () => {
-  console.log(driver.status())
-  console.log('-')
-// console.log(text)
+
+sundayDriver(options).then((status) => {
+  console.log('done!')
 })
