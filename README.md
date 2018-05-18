@@ -26,37 +26,51 @@ this allows processing a large file, by sizable chunks, without any race-conditi
 </div>
 
 ```js
-const SundayDriver = require('sunday-driver')
+const sundayDriver = require('sunday-driver')
 
 let options= {
   file: './my/large/file.tsv',
   splitter: '\n',
   start: '80%', //as percentages, or in bytes
   end: '100%',
+	//do your thing, for each segment
+	each: (chunk, resume) => {
+	  console.log(chunk)//do your thing..
+	  resume()
+	}
+	//log progress-based events
+	atPercent: {
+		50: (status) => {
+			console.log('50%!')
+		},
+		75: () => {
+			console.log('75%!')
+		},
+	},
+	//log time-based events
+	atInterval: {
+		'1min': (status) => {
+			console.log('1 minute')
+		},
+		'2mins': () => {
+			console.log('2 minutes')
+		},
+	}
 }
 
-let runner = new SundayDriver(options)
-
-//don't forget this listener
-//gets a the same thing as you would from a .split()
-runner.on('each', (chunk, resume) => {
-  console.log(chunk)//do your thing..
-  resume()
+sundayDriver(options).then((status)=>{
+	console.log('done!')
 })
-runner.on('end', () => {
-  console.log('done!')
-})
-runner.on('error', console.error)
 ```
 
-at any time, when you want a report, you can call `.status()`:
+any events/intervals will provide you with all the details of the current reader's status:
 ```js
-runner.status()
 /*{
-  chunksDone:: 10,      //how many times we've called .on('each',fn)
-	bytesDone:: 20480,    //how many bytes we've processed so far
-	position: 34.42, //where, in percentage, we are in the file. (if we didn't start at the top!)
-	progress: 68.84  //how far, in percentage, we are to being complete
+  chunksDone:: 10,     // how many times we've called the 'each' function
+	bytesDone:: 20480,   // how many bytes we've processed so far
+	filesize:: 61440,    // size of the whole file
+	position: 34.42,     // where, in percentage, we are in the file. (if we didn't start at the top!)
+	progress: 68.84      // how far, in percentage, we are to being complete
 }*/
 ```
 

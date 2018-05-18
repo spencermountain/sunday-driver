@@ -1,16 +1,20 @@
 const sundayDriver = require('./src/index')
 
 let options = {
-  file: './tests/docs/500-k.txt',
+  // file: './tests/docs/500-k.txt',
   // file: './tests/docs/buddyHolly.txt',
   // file: './tests/docs/abc.txt',
+  file: '/Users/spencer/data/wikipedia/eswiki-latest-pages-articles.xml',
   start: '50%',
   end: '80%',
-  splitter: "2000",
+  splitter: "</page>",
   // chunkSize: 20,
 
   each: (str, resume) => {
-    console.log('-')
+    let m = str.match(/<title>(.*?)<\/title>/)
+    if (m) {
+      console.log('         ' + m[1])
+    }
     resume()
   },
 
@@ -24,6 +28,7 @@ let options = {
   },
   atInterval: {
     '1min': (status) => {
+      console.log(status)
       console.log('1 minute')
     },
     '2mins': () => {
