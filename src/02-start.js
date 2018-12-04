@@ -3,8 +3,8 @@ const fs = require('fs');
 const init = function() {
   this.stream = fs.createReadStream(this.file, {
     encoding: this.encoding || 'utf-8',
-    start: this.startByte,
-    end: this.endByte,
+    start: Math.ceil(this.startByte),
+    end: Math.floor(this.endByte),
     highWaterMark: this.chunkSize //this sets the size for each data chunk
   });
   //wire-up our listeners, too
