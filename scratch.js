@@ -11,8 +11,7 @@ let options = {
   // chunkSize: 20,
 
   each: (str, resume) => {
-    console.log(str)
-    process.kill()
+    console.log(str.length)
     resume()
   },
 
