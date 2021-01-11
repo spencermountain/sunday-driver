@@ -29,14 +29,14 @@ this allows processing a large file, by sizable chunks, without any race-conditi
 const sundayDriver = require('sunday-driver')
 
 let options= {
-  file: './my/large/file.tsv',
-  splitter: '\n',
-  start: '80%', //as percentages, or in bytes
-  end: '100%',
+	file: './my/large/file.tsv',
+	splitter: '\n',
+	start: '80%', //as percentages, or in bytes
+	end: '100%',
 	//do your thing, for each segment
 	each: (chunk, resume) => {
-	  console.log(chunk)//do your thing..
-	  resume()
+		console.log(chunk)//do your thing..
+		resume()
 	}
 	//log progress-based events
 	atPercent: {
@@ -50,10 +50,10 @@ let options= {
 	//log time-based events
 	atInterval: {
 		'1min': (status) => {
-			console.log('1 minute')
+		console.log('1 minute')
 		},
 		'2mins': () => {
-			console.log('2 minutes')
+		console.log('2 minutes')
 		},
 	}
 }
